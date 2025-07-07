@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tehillz Dictionary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #f0f0f0;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 3rem 1.2rem 1.5rem;
+            font-size: 1.1rem;
+            border: 3px solid #fff;
+            border-radius: 50px;
+            outline: none;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #4CAF50;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .search-btn:hover {
+            background: #45a049;
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .search-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .word-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .phonetic {
+            font-size: 1.3rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .audio-btn {
+            background: #3498db;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .audio-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .meaning-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+        }
+
+        .part-of-speech {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-transform: capitalize;
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .definition {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 10px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .example {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+        }
+
+        .synonyms, .antonyms {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 10px;
+        }
+
+        .synonyms h4, .antonyms h4 {
+            color: #27ae60;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .synonym-list, .antonym-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .synonym-item, .antonym-item {
+            background: #27ae60;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .synonym-item:hover, .antonym-item:hover {
+            background: #2ecc71;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 2px solid rgba(231, 76, 60, 0.3);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .suggestions {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .suggestions h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .suggestion-item {
+            display: inline-block;
+            background: #9b59b6;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: 0.3rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .suggestion-item:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        .history-section {
+            margin-top: 2rem;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .history-title {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .history-item {
+            background: #34495e;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .history-item:hover {
+            background: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 73, 94, 0.3);
+        }
+
+        .clear-history {
+            background: #e74c3c;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .clear-history:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .ai-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .ai-mode-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.5);
+        }
+
+        .ai-mode-toggle.active {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            animation: ai-active 1s ease-in-out infinite alternate;
+        }
+
+        .speed-typing {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: none;
+        }
+
+        .performance-stats {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            z-index: 1000;
+            display: none;
+            min-width: 200px;
+        }
+
+        .performance-stats.active {
+            display: block;
+        }
+
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .neural-background.active {
+            opacity: 0.1;
+        }
+
+        .tesla-mode-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+            display: none;
+            z-index: 1000;
+            animation: tesla-pulse 2s infinite;
+        }
+
+        .tesla-mode-indicator.active {
+            display: block;
+        }
+
+        .voice-input-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .voice-input-btn:hover {
+            color: #e74c3c;
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        .voice-input-btn.listening {
+            color: #e74c3c;
+            animation: voice-pulse 1s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6); }
+            100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); }
+        }
+
+        @keyframes ai-active {
+            0% { box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5); }
+            100% { box-shadow: 0 12px 35px rgba(58, 123, 213, 0.7); }
+        }
+
+        @keyframes tesla-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes voice-pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .footer {
+            margin-top: 4rem;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(44,62,80,0.95) 100%);
+            border-radius: 30px 30px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            opacity: 0.3;
+        }
+
+        .footer-content {
+            text-align: center;
+            color: #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #f39c12, #e67e22, #d35400);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .footer-subtitle {
+            font-size: 1.1rem;
+            color: #bdc3c7;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .footer-copyright {
+            font-size: 1rem;
+            color: #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .crown-icon {
+            font-size: 1.2rem;
+            color: #f1c40f;
+            animation: rotate 3s linear infinite;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-link {
+            color: #3498db;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            background: rgba(52, 152, 219, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+
+        .footer-link:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .footer-decorative {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(155, 89, 182, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.05) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .year-highlight {
+            color: #e74c3c;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+            100% { text-shadow: 0 0 30px rgba(243, 156, 18, 0.8), 0 0 40px rgba(243, 156, 18, 0.3); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .search-input {
+                font-size: 1rem;
+                padding: 1rem 2.5rem 1rem 1rem;
+            }
+            
+            .word-title {
+                font-size: 2rem;
+            }
+            
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .footer-title {
+                font-size: 1.5rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .footer-copyright {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">Tehillz Dictionary</h1>
+            <p class="tagline">Your Gateway to the World of Words</p>
+        </div>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <button class="voice-input-btn" id="voiceBtn" title="Voice Search">🎤</button>
+                <input type="text" class="search-input" placeholder="Search for any word... or try voice input!" id="searchInput">
+                <button class="search-btn" id="searchBtn">Search</button>
+            </div>
+        </div>
+
+        <!-- AI Mode Toggle -->
+        <button class="ai-mode-toggle" id="aiModeToggle">🤖 AI Mode</button>
+
+        <!-- Performance Stats -->
+        <div class="performance-stats" id="performanceStats">
+            <div>⚡ Search Speed: <span id="searchTime">0ms</span></div>
+            <div>🔍 Searches: <span id="searchCount">0</span></div>
+            <div>🚀 Performance: <span id="performanceLevel">Optimal</span></div>
+            <div>🧠 AI Status: <span id="aiStatus">Standby</span></div>
+        </div>
+
+        <!-- Tesla Mode Indicator -->
+        <div class="tesla-mode-indicator" id="teslaModeIndicator">
+            🚗 TESLA MODE ACTIVATED
+        </div>
+
+        <!-- Speed Typing Indicator -->
+        <div class="speed-typing" id="speedTyping">
+            WPM: <span id="wpmCounter">0</span>
+        </div>
+
+        <!-- Neural Network Background -->
+        <canvas class="neural-background" id="neuralCanvas"></canvas>
+
+        <div id="loadingDiv" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Searching for the perfect definition...</p>
+        </div>
+
+        <div id="resultContainer"></div>
+        
+        <div class="history-section" id="historySection" style="display: none;">
+            <div class="history-title">
+                <span>📚 Search History</span>
+                <button class="clear-history" id="clearHistoryBtn">Clear All</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-decorative"></div>
+            <div class="footer-content">
+                <div class="footer-title">King of Programming Tehilla</div>
+                <div class="footer-subtitle">Crafting Digital Excellence Since Forever</div>
+                <div class="footer-copyright">
+                    <span class="crown-icon">👑</span>
+                    <span>Created by King of Programming Tehilla &copy; <span class="year-highlight" id="currentYear">2025</span></span>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Portfolio</a>
+                    <a href="#" class="footer-link">Projects</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        class TehillzDictionary {
+            constructor() {
+                this.searchInput = document.getElementById('searchInput');
+                this.searchBtn = document.getElementById('searchBtn');
+                this.voiceBtn = document.getElementById('voiceBtn');
+                this.loadingDiv = document.getElementById('loadingDiv');
+                this.resultContainer = document.getElementById('resultContainer');
+                this.historySection = document.getElementById('historySection');
+                this.historyList = document.getElementById('historyList');
+                this.clearHistoryBtn = document.getElementById('clearHistoryBtn');
+                this.aiModeToggle = document.getElementById('aiModeToggle');
+                this.performanceStats = document.getElementById('performanceStats');
+                this.teslaModeIndicator = document.getElementById('teslaModeIndicator');
+                this.speedTyping = document.getElementById('speedTyping');
+                this.neuralCanvas = document.getElementById('neuralCanvas');
+                
+                this.searchHistory = JSON.parse(localStorage.getItem('tehillzSearchHistory') || '[]');
+                this.currentAudio = null;
+                this.aiMode = false;
+                this.searchCount = 0;
+                this.isListening = false;
+                this.typingSpeed = 0;
+                this.lastTypingTime = 0;
+                this.keyCount = 0;
+                this.startTime = Date.now();
+                
+                this.init();
+                this.initNeuralBackground();
+            }
+
+            init() {
+                this.searchBtn.addEventListener('click', () => this.searchWord());
+                this.voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+                this.aiModeToggle.addEventListener('click', () => this.toggleAIMode());
+                
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchWord();
+                    }
+                    this.trackTypingSpeed();
+                });
+                
+                this.searchInput.addEventListener('input', () => {
+                    this.trackTypingSpeed();
+                });
+                
+                this.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+                
+                this.displayHistory();
+                this.searchInput.focus();
+                this.updatePerformanceStats();
+                
+                // Easter egg: Konami Code for Tesla Mode
+                this.konamiCode = [];
+                this.konamiSequence = [
+                    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+                    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+                    'KeyB', 'KeyA'
+                ];
+                
+                document.addEventListener('keydown', (e) => {
+                    this.konamiCode.push(e.code);
+                    if (this.konamiCode.length > this.konamiSequence.length) {
+                        this.konamiCode.shift();
+                    }
+                    
+                    if (this.konamiCode.join(',') === this.konamiSequence.join(',')) {
+                        this.activateTeslaMode();
+                    }
+                });
+            }
+
+            initNeuralBackground() {
+                const canvas = this.neuralCanvas;
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const nodes = [];
+                const connections = [];
+                
+                // Create nodes
+                for (let i = 0; i < 50; i++) {
+                    nodes.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        size: Math.random() * 3 + 1
+                    });
+                }
+                
+                const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Update and draw nodes
+                    nodes.forEach(node => {
+                        node.x += node.vx;
+                        node.y += node.vy;
+                        
+                        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+                        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+                        
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                        ctx.fillStyle = '#3498db';
+                        ctx.fill();
+                    });
+                    
+                    // Draw connections
+                    for (let i = 0; i < nodes.length; i++) {
+                        for (let j = i + 1; j < nodes.length; j++) {
+                            const dx = nodes[i].x - nodes[j].x;
+                            const dy = nodes[i].y - nodes[j].y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 100) {
+                                ctx.beginPath();
+                                ctx.moveTo(nodes[i].x, nodes[i].y);
+                                ctx.lineTo(nodes[j].x, nodes[j].y);
+                                ctx.strokeStyle = `rgba(52, 152, 219, ${1 - distance / 100})`;
+                                ctx.lineWidth = 0.5;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    
+                    requestAnimationFrame(animate);
+                };
+                
+                animate();
+            }
+
+            toggleVoiceInput() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    alert('🎤 Voice recognition not supported in this browser. Try Chrome or Edge!');
+                    return;
+                }
+
+                if (this.isListening) {
+                    this.stopVoiceInput();
+                } else {
+                    this.startVoiceInput();
+                }
+            }
+
+            startVoiceInput() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+                this.recognition.continuous = false;
+                this.recognition.interimResults = false;
+                this.recognition.lang = 'en-US';
+
+                this.recognition.onstart = () => {
+                    this.isListening = true;
+                    this.voiceBtn.classList.add('listening');
+                    this.searchInput.placeholder = 'Listening... speak now!';
+                };
+
+                this.recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    this.searchInput.value = transcript;
+                    this.searchWord();
+                };
+
+                this.recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    this.stopVoiceInput();
+                };
+
+                this.recognition.onend = () => {
+                    this.stopVoiceInput();
+                };
+
+                this.recognition.start();
+            }
+
+            stopVoiceInput() {
+                this.isListening = false;
+                this.voiceBtn.classList.remove('listening');
+                this.searchInput.placeholder = 'Search for any word... or try voice input!';
+                if (this.recognition) {
+                    this.recognition.stop();
+                }
+            }
+
+            toggleAIMode() {
+                this.aiMode = !this.aiMode;
+                this.aiModeToggle.classList.toggle('active', this.aiMode);
+                this.performanceStats.classList.toggle('active', this.aiMode);
+                this.neuralCanvas.classList.toggle('active', this.aiMode);
+                
+                if (this.aiMode) {
+                    this.aiModeToggle.textContent = '🧠 AI ACTIVE';
+                    this.speedTyping.style.display = 'block';
+                } else {
+                    this.aiModeToggle.textContent = '🤖 AI Mode';
+                    this.speedTyping.style.display = 'none';
+                }
+                
+                this.updatePerformanceStats();
+            }
+
+            activateTeslaMode() {
+                this.teslaModeIndicator.classList.add('active');
+                document.body.style.filter = 'hue-rotate(20deg) saturate(1.2)';
+                
+                // Add Tesla-style effects
+                const teslaEffects = document.createElement('style');
+                teslaEffects.textContent = `
+                    .search-input { border-color: #dc2626 !important; }
+                    .search-btn { background: linear-gradient(135deg, #dc2626, #b91c1c) !important; }
+                    .logo { color: #dc2626 !important; }
+                `;
+                document.head.appendChild(teslaEffects);
+                
+                setTimeout(() => {
+                    this.teslaModeIndicator.classList.remove('active');
+                    document.body.style.filter = '';
+                    teslaEffects.remove();
+                }, 5000);
+            }
+
+            trackTypingSpeed() {
+                const now = Date.now();
+                this.keyCount++;
+                
+                if (now - this.lastTypingTime > 1000) {
+                    this.typingSpeed = Math.round((this.keyCount / (now - this.lastTypingTime)) * 60000);
+                    this.keyCount = 0;
+                    this.lastTypingTime = now;
+                    
+                    if (this.aiMode) {
+                        document.getElementById('wpmCounter').textContent = this.typingSpeed;
+                    }
+                }
+            }
+
+            updatePerformanceStats() {
+                document.getElementById('searchCount').textContent = this.searchCount;
+                document.getElementById('aiStatus').textContent = this.aiMode ? 'ACTIVE' : 'Standby';
+                document.getElementById('performanceLevel').textContent = 
+                    this.searchCount > 10 ? 'Ludicrous' : 
+                    this.searchCount > 5 ? 'Insane' : 'Optimal';
+            }
+
+            async searchWord() {
+                const startTime = Date.now();
+                const word = this.searchInput.value.trim().toLowerCase();
+                
+                if (!word) {
+                    this.showError('Please enter a word to search');
+                    return;
+                }
+
+                this.showLoading();
+                this.searchCount++;
+                this.updatePerformanceStats();
+                
+                try {
+                    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Word not found');
+                    }
+                    
+                    const data = await response.json();
+                    const searchTime = Date.now() - startTime;
+                    
+                    if (this.aiMode) {
+                        document.getElementById('searchTime').textContent = `${searchTime}ms`;
+                    }
+                    
+                    this.displayResult(data[0]);
+                    this.addToHistory(word);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    await this.handleSearchError(word);
+                }
+                
+                this.hideLoading();
+            }
+
+            async handleSearchError(word) {
+                try {
+                    // Try alternative API for suggestions
+                    const response = await fetch(`https://api.datamuse.com/sug?s=${word}&max=8`);
+                    const suggestions = await response.json();
+                    
+                    if (suggestions && suggestions.length > 0) {
+                        this.showErrorWithSuggestions(word, suggestions);
+                    } else {
+                        this.showError(`Sorry, we couldn't find "${word}" in our dictionary. Please check the spelling and try again.`);
+                    }
+                } catch (suggestionError) {
+                    this.showError(`Sorry, we couldn't find "${word}" in our dictionary. Please check the spelling and try again.`);
+                }
+            }
+
+            showErrorWithSuggestions(word, suggestions) {
+                this.resultContainer.innerHTML = `
+                    <div class="error">
+                        <h3>Word "${word}" not found</h3>
+                        <p>We couldn't find that word in our dictionary. Please check the spelling and try again.</p>
+                    </div>
+                    <div class="suggestions">
+                        <h3>💡 Did you mean:</h3>
+                        <div class="suggestion-list">
+                            ${suggestions.map(suggestion => 
+                                `<span class="suggestion-item" onclick="dictionary.searchSuggestion('${suggestion.word}')">${suggestion.word}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            searchSuggestion(word) {
+                this.searchInput.value = word;
+                this.searchWord();
+            }
+
+            displayResult(data) {
+                const word = data.word;
+                const phonetic = data.phonetic || '';
+                const phonetics = data.phonetics || [];
+                const meanings = data.meanings || [];
+
+                let audioUrl = '';
+                if (phonetics.length > 0) {
+                    const audioPhonetic = phonetics.find(p => p.audio && p.audio.length > 0);
+                    if (audioPhonetic) {
+                        audioUrl = audioPhonetic.audio;
+                    }
+                }
+
+                let resultHTML = `
+                    <div class="result-card">
+                        <div class="word-header">
+                            <h2 class="word-title">${word}</h2>
+                            <div class="phonetic">
+                                ${phonetic}
+                                ${audioUrl ? `<button class="audio-btn" onclick="dictionary.playAudio('${audioUrl}')">🔊 Listen</button>` : ''}
+                            </div>
+                        </div>
+                `;
+
+                meanings.forEach((meaning, index) => {
+                    resultHTML += `
+                        <div class="meaning-section">
+                            <div class="part-of-speech">${meaning.partOfSpeech}</div>
+                    `;
+
+                    if (meaning.definitions && meaning.definitions.length > 0) {
+                        meaning.definitions.forEach((definition, defIndex) => {
+                            resultHTML += `
+                                <div class="definition">
+                                    <strong>${defIndex + 1}.</strong> ${definition.definition}
+                                    ${definition.example ? `<div class="example">"${definition.example}"</div>` : ''}
+                                </div>
+                            `;
+                        });
+                    }
+
+                    if (meaning.synonyms && meaning.synonyms.length > 0) {
+                        resultHTML += `
+                            <div class="synonyms">
+                                <h4>Synonyms:</h4>
+                                <div class="synonym-list">
+                                    ${meaning.synonyms.slice(0, 10).map(synonym => 
+                                        `<span class="synonym-item" onclick="dictionary.searchSuggestion('${synonym}')">${synonym}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (meaning.antonyms && meaning.antonyms.length > 0) {
+                        resultHTML += `
+                            <div class="antonyms">
+                                <h4>Antonyms:</h4>
+                                <div class="antonym-list">
+                                    ${meaning.antonyms.slice(0, 10).map(antonym => 
+                                        `<span class="antonym-item" onclick="dictionary.searchSuggestion('${antonym}')">${antonym}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    resultHTML += '</div>';
+                });
+
+                resultHTML += '</div>';
+                this.resultContainer.innerHTML = resultHTML;
+            }
+
+            playAudio(audioUrl) {
+                if (this.currentAudio) {
+                    this.currentAudio.pause();
+                    this.currentAudio.currentTime = 0;
+                }
+                
+                this.currentAudio = new Audio(audioUrl);
+                this.currentAudio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            }
+
+            showLoading() {
+                this.loadingDiv.style.display = 'block';
+                this.resultContainer.innerHTML = '';
+            }
+
+            hideLoading() {
+                this.loadingDiv.style.display = 'none';
+            }
+
+            showError(message) {
+                this.resultContainer.innerHTML = `
+                    <div class="error">
+                        <h3>🚫 Oops!</h3>
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
+
+            addToHistory(word) {
+                if (!this.searchHistory.includes(word)) {
+                    this.searchHistory.unshift(word);
+                    if (this.searchHistory.length > 20) {
+                        this.searchHistory.pop();
+                    }
+                    localStorage.setItem('tehillzSearchHistory', JSON.stringify(this.searchHistory));
+                    this.displayHistory();
+                }
+            }
+
+            displayHistory() {
+                if (this.searchHistory.length === 0) {
+                    this.historySection.style.display = 'none';
+                    return;
+                }
+
+                this.historySection.style.display = 'block';
+                this.historyList.innerHTML = this.searchHistory.map(word => 
+                    `<span class="history-item" onclick="dictionary.searchSuggestion('${word}')">${word}</span>`
+                ).join('');
+            }
+
+            clearHistory() {
+                this.searchHistory = [];
+                localStorage.removeItem('tehillzSearchHistory');
+                this.displayHistory();
+            }
+        }
+
+        // Initialize the dictionary when the page loads
+        const dictionary = new TehillzDictionary();
+
+        // Security measures to protect source code
+        (function() {
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+            // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+Shift+J
+            document.addEventListener('keydown', function(e) {
+                // F12
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+I (Developer Tools)
+                if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+U (View Source)
+                if (e.ctrlKey && e.key === 'u') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+J (Console)
+                if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Ctrl+Shift+K (Firefox Console)
+                if (e.ctrlKey && e.shiftKey && e.key === 'K') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Detect developer tools
+            let devtools = {
+                open: false,
+                orientation: null
+            };
+
+            const threshold = 160;
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        document.body.innerHTML = '<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 3rem; border-radius: 20px; color: white; font-family: Georgia, serif; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);"><h2 style="margin-bottom: 1rem; font-size: 2rem;">🔐 Access Restricted</h2><p style="font-size: 1.2rem; margin-bottom: 1rem;">This application is protected by advanced security measures.</p><p style="font-size: 1rem; opacity: 0.9;">Created by King of Programming Tehilla</p></div>';
+                    }
+                } else {
+                    devtools.open = false;
+                }
+            }, 500);
+
+            // Prevent view-source: access
+            if (window.location.protocol === 'view-source:') {
+                window.location.href = 'about:blank';
+            }
+
+            // Clear console periodically
+            setInterval(() => {
+                console.clear();
+            }, 1000);
+
+            // Add fake console methods to confuse potential attackers
+            console.log = function() {};
+            console.warn = function() {};
+            console.error = function() {};
+            console.info = function() {};
+            console.debug = function() {};
+
+            // Disable text selection on sensitive areas
+            document.addEventListener('selectstart', function(e) {
+                if (e.target.tagName === 'SCRIPT' || e.target.tagName === 'STYLE') {
+                    e.preventDefault();
+                }
+            });
+
+            // Real-time year update
+            function updateYear() {
+                const currentYear = new Date().getFullYear();
+                const yearElement = document.getElementById('currentYear');
+                if (yearElement) {
+                    yearElement.textContent = currentYear;
+                }
+            }
+
+            // Update year immediately and then every hour
+            updateYear();
+            setInterval(updateYear, 3600000); // Update every hour
+
+            // Add some obfuscation
+            const protectedFunctions = {
+                a: function() { return 'Tehilla'; },
+                b: function() { return 'King'; },
+                c: function() { return 'Programming'; }
+            };
+
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            // Disable printing
+            window.addEventListener('beforeprint', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+        })();
+
+        // Add some nice visual effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating animation to search button
+            const searchBtn = document.getElementById('searchBtn');
+            searchBtn.addEventListener('mouseenter', function() {
+                this.style.animation = 'pulse 0.5s infinite alternate';
+            });
+            searchBtn.addEventListener('mouseleave', function() {
+                this.style.animation = 'none';
+            });
+
+            // Add sparkle effect to footer title
+            const footerTitle = document.querySelector('.footer-title');
+            if (footerTitle) {
+                footerTitle.addEventListener('mouseover', function() {
+                    this.style.animation = 'glow 0.5s ease-in-out infinite alternate';
+                });
+            }
+        });
+
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: translateY(-50%) scale(1); }
+                100% { transform: translateY(-50%) scale(1.1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
