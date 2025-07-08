@@ -31,6 +31,13 @@
             animation: fadeInDown 1s ease-out;
         }
 
+        @media (max-width: 750px) {
+            .header h1 {
+                font-size: 18px;
+                text-align: left;
+            }
+        }
+
         .logo {
             font-size: 3.5rem;
             font-weight: bold;
@@ -103,6 +110,7 @@
         .search-btn:active {
             transform: translateY(-50%) scale(0.95);
         }
+        
 
         .loading {
             text-align: center;
@@ -377,7 +385,7 @@
 
         .ai-mode-toggle {
             position: fixed;
-            top: 20px;
+            top: 5px;
             right: 20px;
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             border: none;
@@ -477,13 +485,22 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            background: none;
+            margin-left: 455px;
+            background: yellowgreen;
             border: none;
             font-size: 1.2rem;
+            border-radius: 6px;
             cursor: pointer;
             color: #7f8c8d;
             transition: all 0.3s ease;
             z-index: 10;
+            animation: pulse .9s infinite;
+        }
+        @media (max-width:760px) {
+        .voice-input-btn {
+            margin-left: 315px;
+
+        }
         }
 
         .voice-input-btn:hover {
