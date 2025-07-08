@@ -37,6 +37,13 @@
                 text-align: left;
             }
         }
+        @media (max-width: 363px) {
+            .header h1 {
+                font-size: 15px;
+                text-align: left;
+                margin-bottom: 20px;
+            }
+        }
 
         .logo {
             font-size: 3.5rem;
@@ -496,22 +503,26 @@
             z-index: 10;
             animation: pulse .9s infinite;
         }
-        @media (max-width:760px) {
+        @media (max-width:400px) {
         .voice-input-btn {
-            margin-left: 315px;
+            margin-left: 170px;
+            transform: translateY(100%);
+        }
+        }
+        @media (max-width:600px) {
+            .voice-input-btn {
+                margin-left: 300px;
+                transform: translateY(100%);
+            }
+            }
 
-        }
-        }
-
-        .voice-input-btn:hover {
-            color: #e74c3c;
-            transform: translateY(-50%) scale(1.2);
-        }
+       
 
         .voice-input-btn.listening {
             color: #e74c3c;
             animation: voice-pulse 1s infinite;
         }
+      
 
         @keyframes pulse-glow {
             0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3); }
@@ -1266,13 +1277,13 @@
                     return false;
                 }
             });
-
+            
             // Detect developer tools
             let devtools = {
                 open: false,
                 orientation: null
             };
-
+            
             const threshold = 160;
             setInterval(() => {
                 if (window.outerHeight - window.innerHeight > threshold || 
@@ -1285,31 +1296,31 @@
                     devtools.open = false;
                 }
             }, 500);
-
+            
             // Prevent view-source: access
             if (window.location.protocol === 'view-source:') {
                 window.location.href = 'about:blank';
             }
-
+            
             // Clear console periodically
             setInterval(() => {
                 console.clear();
             }, 1000);
-
+            
             // Add fake console methods to confuse potential attackers
             console.log = function() {};
             console.warn = function() {};
             console.error = function() {};
             console.info = function() {};
             console.debug = function() {};
-
+            
             // Disable text selection on sensitive areas
             document.addEventListener('selectstart', function(e) {
                 if (e.target.tagName === 'SCRIPT' || e.target.tagName === 'STYLE') {
                     e.preventDefault();
                 }
             });
-
+            
             // Real-time year update
             function updateYear() {
                 const currentYear = new Date().getFullYear();
@@ -1318,31 +1329,33 @@
                     yearElement.textContent = currentYear;
                 }
             }
-
+            
             // Update year immediately and then every hour
             updateYear();
             setInterval(updateYear, 3600000); // Update every hour
-
+            
             // Add some obfuscation
             const protectedFunctions = {
                 a: function() { return 'Tehilla'; },
                 b: function() { return 'King'; },
                 c: function() { return 'Programming'; }
             };
-
+            
             // Disable drag and drop
             document.addEventListener('dragstart', function(e) {
                 e.preventDefault();
             });
-
+            
             // Disable printing
             window.addEventListener('beforeprint', function(e) {
                 e.preventDefault();
                 return false;
             });
-
-        })();
-
+            
+            })();
+            
+            
+           
         // Add some nice visual effects
         document.addEventListener('DOMContentLoaded', function() {
             // Add floating animation to search button
